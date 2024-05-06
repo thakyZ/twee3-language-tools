@@ -142,7 +142,7 @@ export const onUpdateMacroCache = function (lastMacroCache: Record<string, macro
 	if (errors.length > 0) {
 		// Note: Since this is called early on, these messages might not be displayed.
 		let errorMessages: string = errors.map(err => err.message).join(", \n");
-		showErrorMessage(`Errors encountered parsing parameters of macros: \n${errorMessages}`);
+		showErrorMessage(`Errors encountered parsing parameters of macros: \n${errorMessages}`, errors);
 	}
 
 	// Change the children array entries that are strings into objects

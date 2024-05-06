@@ -9,11 +9,14 @@
 		"clean": "rimraf out"
 	},
 	"name": "twee3-language-tools",
-	"displayName": "Twee 3 Language Tools",
+	"displayName": "Twee 3 Language Tools (Custom)",
 	"description": "Syntax highlighting and programmatic language tools for Twee 3.",
 	"version": "0.25.3",
 	"author": "Cyrus Firheir",
-	"publisher": "cyrusfirheir",
+	"publisher": "nekoboinick",
+  "__metadata": {
+    "publisherDisplayName": "Neko Boi Nick"
+  },
 	"icon": "res/icon.png",
 	"repository": {
 		"type": "git",
@@ -375,6 +378,14 @@
 				"icon": {
 					"dark": "res/dark/storyMapTurnOff.svg",
 					"light": "res/light/storyMapTurnOff.svg"
+				}
+			},
+			{
+				"command": "twee3LanguageTools.storyMap.restart",
+				"title": "Restart Story Map server",
+				"icon": {
+					"dark": "res/dark/storyMapTurnRestart.svg",
+					"light": "res/light/storyMapTurnRestart.svg"
 				}
 			},
 			{

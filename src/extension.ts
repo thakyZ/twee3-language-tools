@@ -27,6 +27,7 @@ import { updateDecorations, updateTextEditorDecorations } from './decorations';
 import { tabstring } from './utils';
 
 import { activateFolding } from './folding';
+import { showWarningMessage } from "./log";
 //#endregion
 
 const documentSelector: vscode.DocumentSelector = {
@@ -108,9 +109,11 @@ export async function activate(ctx: vscode.ExtensionContext) {
 
 	const startUIWrapper = () => startUI(ctx, storyMap);
 	const stopUIWrapper = () => stopUI(ctx, storyMap);
+	const restartUIWrapper = () => { stopUI(ctx, storyMap); startUI(ctx, storyMap); }
 
 	const mapShowCommand = vscode.commands.registerCommand("twee3LanguageTools.storyMap.show", startUIWrapper);
 	const mapStopCommand = vscode.commands.registerCommand("twee3LanguageTools.storyMap.stop", stopUIWrapper);
+	const mapRestartCommand = vscode.commands.registerCommand("twee3LanguageTools.storyMap.restart", restartUIWrapper);
 
 	if (
 		vscode.workspace.getConfiguration("twee3LanguageTools.storyMap").get("restoreStoryMapOnLaunch") &&
@@ -125,7 +128,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
 	});
 
 	ctx.subscriptions.push(
-		mapShowCommand, mapStopCommand, sbPassageCounter,
+		mapShowCommand, mapStopCommand, mapRestartCommand, sbPassageCounter,
 		vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, new DocumentSemanticTokensProvider(ctx), legend)
 		,
 		vscode.languages.registerDocumentSymbolProvider(documentSelector, new PassageSymbolProvider(ctx))
@@ -289,7 +292,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
 		vscode.commands.registerCommand("twee3LanguageTools.passage.pack", async () => {
 			const proceed = await showWarningMessage(
 				`This action replaces position data for all passages in workspace. It will also overwrite any unsaved changes.`,
-				"Proceed"
+				undefined, "Proceed"
 			);
 			if (proceed === "Proceed") {
 				const passages = ctx.workspaceState.get("passages") as Passage[];
