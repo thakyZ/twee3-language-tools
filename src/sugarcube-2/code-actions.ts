@@ -4,6 +4,7 @@ import { readFile, writeFile } from '../file-ops';
 import { macroRegex, macroDef, macro, collectCache, macroList, MacroName } from './macros';
 import { tabstring } from '../utils';
 import { LanguageID } from './configuration';
+import { showErrorMessage } from '../log';
 
 export class EndMacro implements vscode.CodeActionProvider {
 	public static readonly providedCodeActionKinds = [
@@ -45,7 +46,7 @@ export class Unrecognized implements vscode.CodeActionProvider {
 						name: macroName
 					});
 				}
-				
+
 			});
 
 		return Array.from(newMacros).map(el => this.createCommandCodeAction(el[1], collected));
@@ -88,7 +89,7 @@ export const addMacrosToFile = async (macros: Record<string, macroDef>) => {
 			written = true;
 			break;
 		} catch (ex) {
-			vscode.window.showErrorMessage(`\nCouldn't parse '${file}'!\n\n${ex}\n\n`);
+			showErrorMessage(`\nCouldn't parse '${file}'!`,ex);
 		}
 	}
 	if (!written) {
@@ -130,7 +131,7 @@ export const addAllUnrecognizedMacrosInCurrentFile = async (document: vscode.Tex
 	await addMacrosToFile(uniqueMacros);
 }
 
-// Currently this function has the slight 'issue' that it will take the first definition it thinks 
+// Currently this function has the slight 'issue' that it will take the first definition it thinks
 // of when finding a macro. This means that if the first usage is a container macro and the later
 // usages aren't, it will think it is a container macro.
 export const addAllUnrecognizedMacros = () => {
@@ -155,7 +156,7 @@ export const addAllUnrecognizedMacros = () => {
 		const macroDefinitions = await macroList();
 		let allDiags = vscode.languages.getDiagnostics();
 		let uniqueMacros: Record<string, macroDef> = Object.create(null);
-	
+
 		if (token.isCancellationRequested) {
 			return;
 		}
@@ -166,7 +167,7 @@ export const addAllUnrecognizedMacros = () => {
 			if (token.isCancellationRequested) {
 				break;
 			}
-			
+
 			const path: vscode.Uri = allDiags[i][0];
 			progress.report({
 				message: "Opening: " + path.toString(),

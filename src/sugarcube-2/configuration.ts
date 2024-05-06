@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as yaml from 'yaml';
 import * as macros from './macros';
 import * as macroListCore from './macros.json';
+import { showErrorMessage } from '../log';
 
 export const LanguageID = "twee3-sugarcube-2";
 
@@ -86,7 +87,7 @@ export const parseConfiguration = async function (): Promise<Configuration> {
 
 				fileConfig = yamlParse(doc.getText(), "sugarcube-2");
 				if (fileConfig instanceof Error || (!fileConfig.macros && !fileConfig.enums)) {
-					vscode.window.showErrorMessage(`\nCouldn't parse ${file}!\n\n${fileConfig}\n\n`);
+					showErrorMessage(`\nCouldn't parse ${file}!\n\n${fileConfig}\n\n`, "");
 					return EMPTY_CONFIGURATION;
 				}
 				Object.values(fileConfig.macros ?? []).forEach(macro => {
@@ -97,7 +98,7 @@ export const parseConfiguration = async function (): Promise<Configuration> {
 				});
 				const illegalEnums = Object.keys(fileConfig.enums ?? []).filter(enumName => !/^\w+$/.test(enumName));
 				if (illegalEnums.length) {
-					vscode.window.showErrorMessage(`\nEnum(s)\n\n${illegalEnums.join(", ")}\n\ncontain illegal characters and have been omitted`);
+					showErrorMessage(`\nEnum(s)\n\n${illegalEnums.join(", ")}\n\ncontain illegal characters and have been omitted`, "");
 					illegalEnums.forEach(enumName => delete fileConfig.enums[enumName]);
 				}
 

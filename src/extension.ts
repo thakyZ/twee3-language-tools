@@ -75,9 +75,9 @@ export async function activate(ctx: vscode.ExtensionContext) {
 					}).then(_p => {
 						return doc;
 					})
-				);		
+				);
 			});
-			allPassages.push(newPassages);	
+			allPassages.push(newPassages);
 		}
 
 		await Promise.all(allPassages)
@@ -287,7 +287,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
 		})
 		,
 		vscode.commands.registerCommand("twee3LanguageTools.passage.pack", async () => {
-			const proceed = await vscode.window.showWarningMessage(
+			const proceed = await showWarningMessage(
 				`This action replaces position data for all passages in workspace. It will also overwrite any unsaved changes.`,
 				"Proceed"
 			);
@@ -354,10 +354,10 @@ export async function activate(ctx: vscode.ExtensionContext) {
 				const storyData = passages.find((passage) => passage.name === "StoryData");
 				if (storyData) {
 					const range = new vscode.Range(storyData.range.start.translate(1), storyData.range.end);
-					
+
 					const data: any = ctx.workspaceState.get("StoryData", {});
 					data["start"] = passage.name;
-					
+
 					const dataString = JSON.stringify(data, null, tabstring()) + "\n\n";
 
 					const edit = new vscode.WorkspaceEdit();

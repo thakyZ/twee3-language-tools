@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { validate } from "uuid";
 import { Passage } from "./passage";
+import { showErrorMessage, showInformationMessage } from "./log";
 
 export interface StoryData {
 	ifid: string;
@@ -23,7 +24,7 @@ export async function tweeProjectConfig(context: vscode.ExtensionContext) {
 			const errors: string[] = [];
 
 			const storyDataErrorConfig = vscode.workspace.getConfiguration("twee3LanguageTools.twee-3.error.storyData");
-			
+
 			if (storyDataErrorConfig.get("ifid")) {
 				if (!data.ifid) errors.push("IFID not found!");
 				else if (!validate(data.ifid)) errors.push("Invalid IFID!");
@@ -36,9 +37,9 @@ export async function tweeProjectConfig(context: vscode.ExtensionContext) {
 
 			context.workspaceState.update("StoryData", data);
 		} catch (errors) {
-			if (errors instanceof Array) errors.forEach((err: string) => vscode.window.showErrorMessage("Malformed StoryData: " + err));
-			else vscode.window.showErrorMessage("Malformed StoryData JSON: " + (errors as Error).message);
-	
+			if (errors instanceof Array) errors.forEach((err: string) => showErrorMessage("Malformed StoryData: ", err));
+			else showErrorMessage("Malformed StoryData JSON: ", (errors as Error));
+
 			return;
 		}
 
@@ -51,7 +52,7 @@ export async function tweeProjectConfig(context: vscode.ExtensionContext) {
 		const config = vscode.workspace.getConfiguration("twee3LanguageTools.storyformat");
 		if (config.get("current") !== format) {
 			await config.update("current", format)
-			vscode.window.showInformationMessage("Storyformat set to " + format);
+			showInformationMessage("Storyformat set to " + format);
 		}
 	}
 };

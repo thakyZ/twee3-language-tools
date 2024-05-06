@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { Passage } from "./passage";
+import { showInformationMessage } from "./log";
 
 export function passageCounter(ctx: vscode.ExtensionContext, StatusBarItem?: vscode.StatusBarItem) {
 	const passages = ctx.workspaceState.get("passages", []) as Passage[];
@@ -29,7 +30,7 @@ export async function sbStoryMapConfirmationDialog() {
 	if (confirmation) {
 		vscode.commands.executeCommand("twee3LanguageTools.storyMap.show");
 	} else {
-		const answer = await vscode.window.showInformationMessage(
+		const answer = await showInformationMessage(
 			"Would you like to open the Story Map?\n(Opens in default external browser)",
 			{ modal: true },
 			"Open This Time", "Always Open"

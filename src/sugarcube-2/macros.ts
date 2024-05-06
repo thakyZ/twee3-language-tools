@@ -4,6 +4,7 @@ import { ArgumentError, ArgumentWarning, ChosenVariantInformation, findParameter
 import { Passage } from '../passage';
 import { getConfiguration, parseConfiguration } from './configuration';
 import _ from 'lodash';
+import { showErrorMessage } from '../log';
 
 export type MacroName = string;
 export interface macro {
@@ -141,7 +142,7 @@ export const onUpdateMacroCache = function (lastMacroCache: Record<string, macro
 	if (errors.length > 0) {
 		// Note: Since this is called early on, these messages might not be displayed.
 		let errorMessages: string = errors.map(err => err.message).join(", \n");
-		vscode.window.showErrorMessage(`Errors encountered parsing parameters of macros: \n${errorMessages}`);
+		showErrorMessage(`Errors encountered parsing parameters of macros: \n${errorMessages}`);
 	}
 
 	// Change the children array entries that are strings into objects
@@ -326,7 +327,7 @@ const collectUncached = async function (raw: string): Promise<CollectedMacros> {
 		if (lineStart === lineEnd) {
 			charEnd += charStart;
 		}
-		
+
 		let range = new vscode.Range(lineStart, charStart, lineEnd, charEnd);
 
 		if (selfClosingMacrosEnabled && macroSelfClose === "/") {
@@ -598,7 +599,7 @@ export const diagnostics = async function (ctx: vscode.ExtensionContext, documen
 				}
 
 				if (
-					cur.children && cur.children.length > 0 && cur.container && el.open && 
+					cur.children && cur.children.length > 0 && cur.container && el.open &&
 					vscode.workspace.getConfiguration("twee3LanguageTools.sugarcube-2.error").get("childrenValidation")
 				) {
 					let children: Record<string, number> = Object.create(null);
@@ -941,13 +942,13 @@ export const definition = async function (ctx: vscode.ExtensionContext, document
 	const collected = await collectUncached(document.getText());
 
 	const selectedMacro: any = collected.macros.filter(m => {
-		return (m.open && new vscode.Range(m.range.start, collected.macros[m.pair].range.end).contains(position)) || 
+		return (m.open && new vscode.Range(m.range.start, collected.macros[m.pair].range.end).contains(position)) ||
 			m.range.contains(position);
 	})?.pop();
 
 	if (selectedMacro == null)
 		return null;
-	
+
 	return findMacro(selectedMacro.name, token);
 }
 
